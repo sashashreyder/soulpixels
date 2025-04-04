@@ -7,6 +7,7 @@ import ThoughtCard from './components/ThoughtCard'
 type Thought = {
   text: string
   mood?: string
+  comments?: string[]
 }
 
 function App() {
@@ -16,11 +17,13 @@ function App() {
     const normalized = parsed.map((item: any) =>
       typeof item === 'string' ? { text: item } : item
     )
-    return normalized.length ? normalized : [
-      { text: 'Sometimes silence is the loudest answer.' },
-      { text: 'I love the smell of old books.' },
-      { text: "What if each pixel was someone's thought?" },
-    ]
+    return normalized.length
+      ? normalized
+      : [
+          { text: 'Sometimes silence is the loudest answer.' },
+          { text: 'I love the smell of old books.' },
+          { text: "What if each pixel was someone's thought?" },
+        ]
   })
 
   useEffect(() => {
@@ -89,6 +92,7 @@ function App() {
                 <ThoughtCard
                   text={thought.text}
                   mood={thought.mood}
+                  comments={thought.comments}
                   isExpanded={expandedIndex === index}
                   onExpandToggle={() =>
                     setExpandedIndex(expandedIndex === index ? null : index)
@@ -97,6 +101,13 @@ function App() {
                     const updated = thoughts.filter((_, i) => i !== index)
                     setThoughts(updated)
                     if (expandedIndex === index) setExpandedIndex(null)
+                  }}
+                  onAddComment={(newComment) => {
+                    const updated = [...thoughts]
+                    const current = updated[index]
+                    if (!current.comments) current.comments = []
+                    current.comments.push(newComment)
+                    setThoughts(updated)
                   }}
                 />
               </motion.div>
