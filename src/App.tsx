@@ -51,12 +51,11 @@ function App() {
     <>
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-[#0f172a] to-[#1e293b] relative overflow-hidden">
-
-        <div className="z-10 relative flex flex-col items-center">
-        <form
-        onSubmit={handleSubmit}
-        className="mt-[15px] mb-6 w-full max-w-xl flex gap-2 px-2"
-        >
+        <div className="z-10 relative flex flex-col items-center pt-6 px-4">
+          <form
+            onSubmit={handleSubmit}
+            className="mb-6 w-full max-w-xl flex gap-2"
+          >
             <select
               value={selectedMood}
               onChange={(e) => setSelectedMood(e.target.value)}
@@ -85,50 +84,58 @@ function App() {
             </button>
           </form>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl w-full px-2">
-            <AnimatePresence>
-              {thoughts.map((thought, index) => (
-                <motion.div
-                  key={thought.text + index}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ThoughtCard
-                    text={thought.text}
-                    mood={thought.mood}
-                    comments={thought.comments}
-                    isExpanded={expandedIndex === index}
-                    onExpandToggle={() =>
-                      setExpandedIndex(expandedIndex === index ? null : index)
-                    }
-                    onDelete={() => {
-                      const updated = thoughts.filter((_, i) => i !== index)
-                      setThoughts(updated)
-                      if (expandedIndex === index) setExpandedIndex(null)
-                    }}
-                    onAddComment={(newComment) => {
-                      const updated = [...thoughts]
-                      const current = updated[index]
-                      if (!current.comments) current.comments = []
-                      current.comments.push(newComment)
-                      setThoughts(updated)
-                    }}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+          <div className="flex justify-center w-full">
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl w-full"
+            >
+              <AnimatePresence>
+                {thoughts.map((thought, index) => (
+                  <motion.div
+                    key={thought.text + index}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ThoughtCard
+                      text={thought.text}
+                      mood={thought.mood}
+                      comments={thought.comments}
+                      isExpanded={expandedIndex === index}
+                      onExpandToggle={() =>
+                        setExpandedIndex(expandedIndex === index ? null : index)
+                      }
+                      onDelete={() => {
+                        const updated = thoughts.filter((_, i) => i !== index)
+                        setThoughts(updated)
+                        if (expandedIndex === index) setExpandedIndex(null)
+                      }}
+                      onAddComment={(newComment) => {
+                        const updated = [...thoughts]
+                        const current = updated[index]
+                        if (!current.comments) current.comments = []
+                        current.comments.push(newComment)
+                        setThoughts(updated)
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
         </div>
+        <PixelSky />
       </main>
-      <PixelSky />
       <Footer />
     </>
   )
 }
 
 export default App
+
+
 
 
 
