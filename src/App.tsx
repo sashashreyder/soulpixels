@@ -4,6 +4,8 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import ThoughtCard from './components/ThoughtCard'
 import PixelSky from './components/PixelSky'
+import MickeyCard from './components/MickeyCard'
+
 
 type Thought = {
   text: string
@@ -83,6 +85,8 @@ function App() {
               Add
             </button>
           </form>
+
+          
 
           <div className="flex justify-center w-full">
             <motion.div

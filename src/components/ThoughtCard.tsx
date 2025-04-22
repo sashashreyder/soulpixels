@@ -94,7 +94,7 @@ export default function ThoughtCard({
             </button>
             <button
               onClick={onExpandToggle}
-              className="text-gray-300 underline"
+              className="text-black-300 underline"
             >
               Close
             </button>
