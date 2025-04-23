@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+
+// Import components
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ThoughtCard from './components/ThoughtCard'
 import PixelSky from './components/PixelSky'
-import MickeyCard from './components/MickeyCard'
 
-
+// Type for a thought item
 type Thought = {
   text: string
   mood?: string
@@ -14,12 +15,17 @@ type Thought = {
 }
 
 function App() {
+  // Initialize thoughts from localStorage (if any), or set default ones
   const [thoughts, setThoughts] = useState<Thought[]>(() => {
     const stored = localStorage.getItem('soul-pixel-thoughts')
     const parsed = stored ? JSON.parse(stored) : []
+
+    // Normalize old string-only format to object format
     const normalized = parsed.map((item: any) =>
       typeof item === 'string' ? { text: item } : item
     )
+
+    // Return stored thoughts or default starter thoughts
     return normalized.length
       ? normalized
       : [
@@ -29,14 +35,19 @@ function App() {
         ]
   })
 
+  // Save thoughts to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('soul-pixel-thoughts', JSON.stringify(thoughts))
   }, [thoughts])
 
+  // New input text and mood selection
   const [newThought, setNewThought] = useState('')
   const [selectedMood, setSelectedMood] = useState('')
+
+  // Index of the currently expanded card (or null)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
+  // Handle form submission to add a new thought
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (newThought.trim()) {
@@ -52,12 +63,16 @@ function App() {
   return (
     <>
       <Header />
+
       <main className="min-h-screen bg-gradient-to-b from-[#0f172a] to-[#1e293b] relative overflow-hidden">
         <div className="z-10 relative flex flex-col items-center pt-6 px-4">
+
+          {/* Thought input form */}
           <form
             onSubmit={handleSubmit}
             className="mb-6 w-full max-w-xl flex gap-2"
           >
+            {/* Mood select */}
             <select
               value={selectedMood}
               onChange={(e) => setSelectedMood(e.target.value)}
@@ -71,6 +86,7 @@ function App() {
               <option value="🤯">🤯 Overwhelmed</option>
             </select>
 
+            {/* Thought text input */}
             <input
               type="text"
               value={newThought}
@@ -78,6 +94,8 @@ function App() {
               placeholder="Type your thought..."
               className="text-white flex-1 p-2 rounded border border-gray-300 shadow-sm placeholder-white focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
+
+            {/* Submit button */}
             <button
               type="submit"
               className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition"
@@ -86,8 +104,7 @@ function App() {
             </button>
           </form>
 
-          
-
+          {/* Grid of thought cards */}
           <div className="flex justify-center w-full">
             <motion.div
               layout
@@ -103,6 +120,7 @@ function App() {
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.3 }}
                   >
+                    {/* Render one ThoughtCard */}
                     <ThoughtCard
                       text={thought.text}
                       mood={thought.mood}
@@ -130,14 +148,18 @@ function App() {
             </motion.div>
           </div>
         </div>
+
+        {/* Floating pixel stars */}
         <PixelSky />
       </main>
+
       <Footer />
     </>
   )
 }
 
 export default App
+
 
 
 

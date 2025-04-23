@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
+// Define the props that this card receives
 type ThoughtCardProps = {
   text: string
   mood?: string
@@ -20,8 +21,10 @@ export default function ThoughtCard({
   onExpandToggle,
   onAddComment
 }: ThoughtCardProps) {
+  // State for the comment textarea
   const [comment, setComment] = useState('')
 
+  // Called when the user clicks "Submit"
   const handleSubmit = () => {
     if (comment.trim()) {
       onAddComment(comment)
@@ -29,6 +32,7 @@ export default function ThoughtCard({
     }
   }
 
+  // Background color based on the selected mood
   const moodColor = {
     '😊': 'bg-pink-100',
     '😔': 'bg-blue-50',
@@ -46,9 +50,10 @@ export default function ThoughtCard({
       className={`
         relative ${moodColor}
         w-full ${isExpanded ? 'max-w-xl h-auto' : ''}
-        min-h-36 p-4 rounded-3xl shadow-md shadow-gray-100 text-[15px] leading-relaxed text-gray-800
+        p-4 rounded-3xl shadow-md shadow-gray-100 text-[15px] leading-relaxed text-gray-800
       `}
     >
+      {/* Delete button — only visible when not expanded */}
       {!isExpanded && (
         <button
           onClick={onDelete}
@@ -58,15 +63,17 @@ export default function ThoughtCard({
         </button>
       )}
 
+      {/* Mood emoji in the top left */}
       {mood && (
         <div className="absolute top-2 left-3 text-xl">{mood}</div>
       )}
 
-<p className="whitespace-pre-wrap mt-6 font-hand text-gray-900 drop-shadow-sm">
-  {text}
-</p>
+      {/* Main thought text */}
+      <p className="whitespace-pre-wrap mt-6 font-hand text-gray-900 drop-shadow-sm">
+        {text}
+      </p>
 
-
+      {/* Expand button — shows comment section */}
       {!isExpanded && (
         <button
           onClick={onExpandToggle}
@@ -76,8 +83,10 @@ export default function ThoughtCard({
         </button>
       )}
 
+      {/* Expanded comment section */}
       {isExpanded && (
         <div className="mt-4">
+          {/* Comment input */}
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -85,6 +94,8 @@ export default function ThoughtCard({
             className="w-full p-2 border rounded-md bg-white/70"
             rows={3}
           />
+
+          {/* Submit + Close buttons */}
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleSubmit}
@@ -99,6 +110,8 @@ export default function ThoughtCard({
               Close
             </button>
           </div>
+
+          {/* Display list of comments if any */}
           {comments.length > 0 && (
             <div className="mt-4 space-y-2">
               {comments.map((c, i) => (
@@ -116,6 +129,7 @@ export default function ThoughtCard({
     </motion.div>
   )
 }
+
 
 
 
