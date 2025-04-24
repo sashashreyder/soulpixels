@@ -6,6 +6,9 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import ThoughtCard from './components/ThoughtCard'
 import PixelSky from './components/PixelSky'
+import FloatingCloud from './components/FloatingCloud'
+
+
 
 // Type for a ready thought
 type Thought = {
@@ -36,8 +39,8 @@ function App() {
     return convertedThoughts.length
       ? convertedThoughts
       : [
-          { text: 'Sometimes silence is the loudest answer.' },
-          { text: 'I love the smell of old books.' },
+          { text: 'Sometimes fart is the loudest answer.' },
+          { text: 'I love the smell of old socks.' },
           { text: "What if each pixel was someone's thought?" },
         ]
   })
@@ -158,6 +161,9 @@ function App() {
 
         {/* Floating pixel stars */}
         <PixelSky />
+        {/* Floating clouds */}
+       <FloatingCloud text="🌤 Feeling dreamy..." top="30%" left="10%" />
+       <FloatingCloud text="💭 Just thinking..." top="55%" left="60%" />
       </main>
 
       <Footer />
