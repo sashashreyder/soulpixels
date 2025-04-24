@@ -7,27 +7,34 @@ import Footer from './components/Footer'
 import ThoughtCard from './components/ThoughtCard'
 import PixelSky from './components/PixelSky'
 
-// Type for a thought item
+// Type for a ready thought
 type Thought = {
   text: string
   mood?: string
   comments?: string[]
 }
 
+type RawThought = string | Thought // This type represents either a string or a full Thought object with text, mood, and comments
+
 function App() {
   // Initialize thoughts from localStorage (if any), or set default ones
-  const [thoughts, setThoughts] = useState<Thought[]>(() => {
+  
+    const [thoughts, setThoughts] = useState<Thought[]>(() => {
     const stored = localStorage.getItem('soul-pixel-thoughts')
-    const parsed = stored ? JSON.parse(stored) : []
+    const loadedThoughts = stored ? JSON.parse(stored) : [] // Load saved thoughts from localStorage
 
-    // Normalize old string-only format to object format
-    const normalized = parsed.map((item: any) =>
+// Convert old string-only thoughts (like "hello") into full object format ({ text: "hello" })
+// This keeps compatibility with data saved in earlier versions of the app
+// If the item is a string — convert it to an object
+// If the item is already an object (with mood or comments), leave it as it is 
+
+    const convertedThoughts = loadedThoughts.map((item: RawThought) =>
       typeof item === 'string' ? { text: item } : item
     )
 
     // Return stored thoughts or default starter thoughts
-    return normalized.length
-      ? normalized
+    return convertedThoughts.length
+      ? convertedThoughts
       : [
           { text: 'Sometimes silence is the loudest answer.' },
           { text: 'I love the smell of old books.' },
