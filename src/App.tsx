@@ -4,11 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 // Import components
 import Header from './components/Header'
 import Footer from './components/Footer'
-import ThoughtCard from './components/ThoughtCard'
 import PixelSky from './components/PixelSky'
 import FloatingCloud from './components/FloatingCloud'
-
-
 
 // Type for a ready thought
 type Thought = {
@@ -25,6 +22,7 @@ function App() {
     const [thoughts, setThoughts] = useState<Thought[]>(() => {
     const stored = localStorage.getItem('soul-pixel-thoughts')
     const loadedThoughts = stored ? JSON.parse(stored) : [] // Load saved thoughts from localStorage
+    
 
 // Convert old string-only thoughts (like "hello") into full object format ({ text: "hello" })
 // This keeps compatibility with data saved in earlier versions of the app
@@ -53,9 +51,6 @@ function App() {
   // New input text and mood selection
   const [newThought, setNewThought] = useState('')
   const [selectedMood, setSelectedMood] = useState('')
-
-  // Index of the currently expanded card (or null)
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   // Handle form submission to add a new thought
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,40 +116,29 @@ function App() {
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl w-full"
             >
               <AnimatePresence>
-                {thoughts.map((thought, index) => (
-                  <motion.div
-                    key={thought.text + index}
-                    layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {/* Render one ThoughtCard */}
-                    <ThoughtCard
-                      text={thought.text}
-                      mood={thought.mood}
-                      comments={thought.comments}
-                      isExpanded={expandedIndex === index}
-                      onExpandToggle={() =>
-                        setExpandedIndex(expandedIndex === index ? null : index)
-                      }
-                      onDelete={() => {
-                        const updated = thoughts.filter((_, i) => i !== index)
-                        setThoughts(updated)
-                        if (expandedIndex === index) setExpandedIndex(null)
-                      }}
-                      onAddComment={(newComment) => {
-                        const updated = [...thoughts]
-                        const current = updated[index]
-                        if (!current.comments) current.comments = []
-                        current.comments.push(newComment)
-                        setThoughts(updated)
-                      }}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+  {thoughts.map((thought, index) => (
+    <motion.div
+      key={thought.text + index}
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.3 }}
+      style={{
+        position: 'absolute',
+        top: `${Math.random() * 80}%`,
+        left: `${Math.random() * 80}%`,
+      }}
+    >
+      <FloatingCloud
+        text={thought.text}
+        top="0" // можно убрать, позиционирование теперь в motion.div
+        left="0"
+      />
+    </motion.div>
+  ))}
+</AnimatePresence>
+
             </motion.div>
           </div>
         </div>

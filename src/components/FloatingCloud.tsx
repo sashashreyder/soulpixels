@@ -6,6 +6,7 @@ type FloatingCloudProps = {
   left: string;
 };
 
+
 const FloatingCloud: React.FC<FloatingCloudProps> = ({ text, top, left }) => {
   return (
     <div
