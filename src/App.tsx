@@ -10,18 +10,33 @@ type Thought = {
   text: string
   mood?: string
   comments?: string[]
+  top: string
+  left: string
 }
 
-type RawThought = string | Thought
+type RawThought = string | Omit<Thought, 'top' | 'left'>
 
 function App() {
   const [thoughts, setThoughts] = useState<Thought[]>(() => {
     const stored = localStorage.getItem('soul-pixel-thoughts')
     const loadedThoughts = stored ? JSON.parse(stored) : []
 
-    return loadedThoughts.map((item: RawThought) =>
-      typeof item === 'string' ? { text: item } : item
-    )
+    return loadedThoughts.map((item: RawThought) => {
+      if (typeof item === 'string') {
+        return {
+          text: item,
+          mood: undefined,
+          comments: [],
+          top: `${10 + Math.random() * 70}%`,
+          left: `${5 + Math.random() * 80}%`,
+        }
+      }
+      return {
+        ...item,
+        top: 'top' in item ? item.top : `${10 + Math.random() * 70}%`,
+        left: 'left' in item ? item.left : `${5 + Math.random() * 80}%`,
+      }
+    })
   })
 
   useEffect(() => {
@@ -34,9 +49,18 @@ function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (newThought.trim()) {
+      const randomTop = `${10 + Math.random() * 70}%`
+      const randomLeft = `${5 + Math.random() * 80}%`
+
       setThoughts(prev => [
         ...prev,
-        { text: newThought.trim(), mood: selectedMood || undefined }
+        {
+          text: newThought.trim(),
+          mood: selectedMood || undefined,
+          comments: [],
+          top: randomTop,
+          left: randomLeft
+        }
       ])
       setNewThought('')
       setSelectedMood('')
@@ -79,7 +103,6 @@ function App() {
             </button>
           </form>
 
-          {/* Cloud thoughts container */}
           <div className="relative w-full h-[500px] max-w-5xl">
             <AnimatePresence>
               {thoughts.map((thought, index) => (
@@ -92,11 +115,15 @@ function App() {
                   transition={{ duration: 0.5 }}
                   className="absolute"
                   style={{
-                    top: `${10 + Math.random() * 70}%`,
-                    left: `${5 + Math.random() * 80}%`,
+                    top: thought.top,
+                    left: thought.left,
                   }}
                 >
-                  <FloatingCloud text={thought.text} />
+                  <FloatingCloud
+                    text={thought.text}
+                    top={thought.top}
+                    left={thought.left}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -111,6 +138,7 @@ function App() {
 }
 
 export default App
+
 
 
 
