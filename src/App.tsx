@@ -16,25 +16,41 @@ type Thought = {
 
 type RawThought = string | Omit<Thought, 'top' | 'left'>
 
+function generateNonOverlappingPosition(existingPositions: { top: number, left: number }[], minDistance = 100) {
+  let top: number, left: number
+  let isOverlapping = true
+  let attempts = 0
+
+  while (isOverlapping && attempts < 100) {
+    top = 10 + Math.random() * 70
+    left = 5 + Math.random() * 80
+    isOverlapping = existingPositions.some(pos => {
+      const dx = pos.left - left
+      const dy = pos.top - top
+      return Math.sqrt(dx * dx + dy * dy) < minDistance
+    })
+    attempts++
+  }
+
+  return { top: `${10}%`, left: `${10}%` }
+}
+
 function App() {
   const [thoughts, setThoughts] = useState<Thought[]>(() => {
     const stored = localStorage.getItem('soul-pixel-thoughts')
     const loadedThoughts = stored ? JSON.parse(stored) : []
 
+    const positions: { top: number, left: number }[] = []
+
     return loadedThoughts.map((item: RawThought) => {
-      if (typeof item === 'string') {
-        return {
-          text: item,
-          mood: undefined,
-          comments: [],
-          top: `${10 + Math.random() * 70}%`,
-          left: `${5 + Math.random() * 80}%`,
-        }
-      }
+      const { top, left } = generateNonOverlappingPosition(positions)
+      const base = typeof item === 'string' ? { text: item } : item
+      positions.push({ top: parseFloat(top), left: parseFloat(left) })
       return {
-        ...item,
-        top: 'top' in item ? item.top : `${10 + Math.random() * 70}%`,
-        left: 'left' in item ? item.left : `${5 + Math.random() * 80}%`,
+        ...base,
+        comments: base.comments || [],
+        top,
+        left,
       }
     })
   })
@@ -49,8 +65,11 @@ function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (newThought.trim()) {
-      const randomTop = `${10 + Math.random() * 70}%`
-      const randomLeft = `${5 + Math.random() * 80}%`
+      const positions = thoughts.map(t => ({
+        top: parseFloat(t.top),
+        left: parseFloat(t.left),
+      }))
+      const { top, left } = generateNonOverlappingPosition(positions)
 
       setThoughts(prev => [
         ...prev,
@@ -58,8 +77,8 @@ function App() {
           text: newThought.trim(),
           mood: selectedMood || undefined,
           comments: [],
-          top: randomTop,
-          left: randomLeft
+          top,
+          left,
         }
       ])
       setNewThought('')
@@ -138,6 +157,7 @@ function App() {
 }
 
 export default App
+
 
 
 
