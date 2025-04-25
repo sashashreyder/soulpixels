@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+
+
+
 import Header from './components/Header'
 import Footer from './components/Footer'
 import PixelSky from './components/PixelSky'
@@ -16,8 +19,12 @@ type Thought = {
 
 type RawThought = string | Omit<Thought, 'top' | 'left'>
 
-function generateNonOverlappingPosition(existingPositions: { top: number, left: number }[], minDistance = 100) {
-  let top: number, left: number
+function generateNonOverlappingPosition(
+  existingPositions: { top: number, left: number }[],
+  minDistance = 100
+): { top: string; left: string } {
+  let top = 0
+  let left = 0
   let isOverlapping = true
   let attempts = 0
 
@@ -32,8 +39,13 @@ function generateNonOverlappingPosition(existingPositions: { top: number, left: 
     attempts++
   }
 
-  return { top: `${10}%`, left: `${10}%` }
+  return {
+    top: `${top.toFixed(2)}%`,
+    left: `${left.toFixed(2)}%`
+  }
 }
+
+
 
 function App() {
   const [thoughts, setThoughts] = useState<Thought[]>(() => {
@@ -88,6 +100,7 @@ function App() {
 
   return (
     <>
+    
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-[#0f172a] to-[#1e293b] relative overflow-hidden">
         <div className="z-10 relative flex flex-col items-center pt-6 px-4">
